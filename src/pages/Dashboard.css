@@ -1,0 +1,131 @@
+/* ===========================
+   MAIN DASHBOARD PAGE
+=========================== */
+.dashboard-page {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-page h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* ===========================
+   FILTER ROW (YEAR / MONTH)
+=========================== */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.filter-row button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #ececec;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.filter-row button:hover {
+  background: #d2d2d2;
+}
+
+/* ===========================
+   KPI ROW (TOP CARDS)
+=========================== */
+.kpi-row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ===========================
+   CHART ROWS (BIG CHARTS)
+=========================== */
+.big-charts-row {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 26px;
+}
+
+@media (max-width: 1024px) {
+  .big-charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================
+   CHART BOX (CONTAINER)
+=========================== */
+.chart-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  width: 100%;
+  overflow: hidden;
+}
+
+.chart-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* ===========================
+   PRODUCT GRID (BOTTOM 6 BOXES)
+=========================== */
+.products-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-top: 20px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  min-width: 0;
+}
+
+.product-card h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.product-mini {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ===========================
+   RESPONSIVE PADDING (MOBILE)
+=========================== */
+@media (max-width: 640px) {
+  .dashboard-page {
+    padding: 12px;
+  }
+  .chart-box {
+    padding: 10px;
+  }
+  .kpi-card {
+    padding: 14px;
+  }
+}
