@@ -1,28 +1,22 @@
-import axios from "axios";
+// src/api/dashboardApi.js
 
-export async function getProductionData({ fnYear, month, type }) {
+import api from "./apiInstance";
+/**
+ * Fetch production data (year / month / book / item etc.)
+ * @param {Object} payload - API request body
+ * @returns {Array} production data list
+ */
+export const getProductionData = async (payload) => {
   try {
-    const response = await axios.post(
-      "http://devserver:54700/api/Production/GetProductionData",
-      {
-        fnYear: fnYear ?? null,
-        month: month ?? null,
-        type: type ?? null
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-          "Content-Type": "application/json"
-        }
-      }
+    const res = await api.post(
+      "/Production/GetProductionData", // relative path
+      payload
     );
 
-    if (response.data?.success) {
-      return response.data.data || [];
-    }
-    return [];
-  } catch (err) {
-    console.error("getProductionData ERROR:", err);
+    // API returns { data: [...] }
+    return res.data?.data || [];
+  } catch (error) {
+    console.error("getProductionData error:", error);
     return [];
   }
-}
+};

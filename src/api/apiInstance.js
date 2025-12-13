@@ -1,30 +1,30 @@
 // src/api/apiInstance.js
 import axios from "axios";
 
+// Central Axios instance for whole app
 const api = axios.create({
-  baseURL: "http://devserver:54700/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL, // env based URL
   timeout: 15000,
 });
 
-// Add Bearer token automatically
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Attach token before every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// Handle 401 globally
+// Handle unauthorized globally
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
 

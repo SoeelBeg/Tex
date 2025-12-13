@@ -1,0 +1,129 @@
+/***********************************
+ PREMIUM FIXED DASHBOARD HEADER
+************************************/
+.dash-header {
+  height: 64px;
+  background: var(--header-bg);
+  color: var(--header-text);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  transition: background 0.25s, color 0.25s;
+
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+
+/* TITLE */
+.dh-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--header-text);
+  margin: 0;
+}
+
+/***********************************
+ RIGHT SIDE ALIGNMENT (PERFECT FIX)
+************************************/
+.dh-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+
+/***********************************
+ THEME BUTTON
+************************************/
+.icon-btn {
+  background: var(--icon-bg);
+  color: var(--icon-color);
+  border: none;
+  border-radius: 10px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.25s ease;
+}
+
+.icon-btn:hover {
+  opacity: 0.8;
+}
+
+/***********************************
+ PROFILE ICON
+************************************/
+.profile-circle {
+  width: 38px;
+  height: 38px;
+  background: var(--profile-bg);
+  color: var(--header-text);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.profile-circle:hover {
+  opacity: 0.88;
+}
+
+/***********************************
+ DROPDOWN MENU
+************************************/
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 160px;
+  background: var(--menu-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 28px var(--shadow);
+  animation: fadeIn 0.2s ease;
+  padding: 8px 0;
+  z-index: 99999;
+}
+
+.pm-item {
+  padding: 10px 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-main);
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.pm-item:hover {
+  background: var(--menu-hover);
+}
+
+/***********************************
+ ANIMATION
+************************************/
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/***********************************
+ RESPONSIVE
+************************************/
+@media (max-width: 768px) {
+  .dh-title {
+    font-size: 17px;
+  }
+
+  .dh-right {
+    gap: 10px;
+  }
+}

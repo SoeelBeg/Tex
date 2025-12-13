@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./layout/MainLayout";
+import { ThemeProvider } from "./ThemeContext";
 
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -12,21 +13,25 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    </Router>
+    <ThemeProvider>  
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
