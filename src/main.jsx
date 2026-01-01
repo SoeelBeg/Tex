@@ -8,4 +8,7 @@ import "./pages/Dashboard.css"; // we'll add this file below
 
 
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(
+<React.StrictMode>
+  <App />
+</React.StrictMode>);

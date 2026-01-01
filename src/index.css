@@ -1,8 +1,10 @@
 :root {
-  --header-bg: #ffffff;
+  --header-bg: rgb(253, 255, 245);
   --header-text: #1a1a1a;
   --icon-bg: #f1f1f5;
   --icon-color: #1a1a1a;
+
+  --kpi-hover-bg: rgba(13, 110, 253, 0.06);
 
   --profile-bg: #e9e9e9;
   --menu-bg: #ffffff;
@@ -30,11 +32,13 @@ body[data-theme="dark"] {
   --menu-bg: #1e293b;
   --menu-hover: #243347;
 
+   --kpi-hover-bg: rgba(18, 95, 97, 0.865);
+
   /* Dashboard dark palette */
-  --bg-main: #ffffff;         /* full background */
-  --bg-card: #182233;         /* card blocks */
-  --text-main: #e2e8f0;       /* text */
-  --text-sub: #94a3b8;        /* secondary text */
-  --border: #2c3e50;          /* soft blue border */
+   --bg-main: #0b1220;     /* full page dark */
+  --bg-card: #182233;    /* cards */
+  --text-main: #e2e8f0;  /* main text */
+  --text-sub: #94a3b8;   /* sub text */
+  --border: #2c3e50;
   --shadow: rgba(0,0,0,0.45);
 }

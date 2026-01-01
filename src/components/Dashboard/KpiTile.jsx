@@ -17,29 +17,27 @@ export default function KpiTile({
   diff = 0,
   positive = true,
   sub = "",
+  className = "",   // ✅ STEP 1: accept className
 }) {
   return (
-    <div className="kpi-tile">
-      {/* KPI Title */}
+    <div className={`kpi-tile ${className}`}> {/* ✅ STEP 2: forward */}
+      
+    {/* for border animation  */}
+    <span className="border-runner">
+        <i className="top"></i>
+        <i className="right"></i>
+        <i className="bottom"></i>
+        <i className="left"></i>
+      </span>
+
       <div className="kpi-title">{title}</div>
 
-      {/* Value + Diff row */}
       <div className="d-flex align-items-center justify-content-between">
-        {/* Main value */}
         <div className="kpi-value">
           {value ?? "—"}
         </div>
-
-        {/* Percentage change */}
-        <div className={`kpi-diff ${positive ? "pos" : "neg"}`}>
-          {positive ? <FiArrowUpRight /> : <FiArrowDownRight />}
-          <span className="ms-1">
-            {Math.abs(diff)}%
-          </span>
-        </div>
       </div>
 
-      {/* Subtitle (period info) */}
       {sub && (
         <div className="kpi-sub mt-2">
           {sub}

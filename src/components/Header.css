@@ -17,13 +17,31 @@
   z-index: 9999;
 }
 
-/* TITLE */
-.dh-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--header-text);
-  margin: 0;
+/***********************************
+ LEFT LOGO AREA
+************************************/
+.dh-left {
+  display: flex;
+  align-items: center;
 }
+
+/***********************************
+ LOGO FIX (SIZE + RESPONSIVE)
+************************************/
+.dh-logo {
+  height: 70px;        /* ✅ header ke andar fit */
+  width: 90px;
+  max-width: 190px;    /* prevent layout break */
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.dh-logo:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
 
 /***********************************
  RIGHT SIDE ALIGNMENT (PERFECT FIX)
@@ -125,5 +143,19 @@
 
   .dh-right {
     gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dh-logo {
+    height: 32px;
+    max-width: 130px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dh-logo {
+    height: 28px;
+    max-width: 110px;
   }
 }

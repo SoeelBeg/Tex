@@ -10,12 +10,12 @@ export default function Header() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [open, setOpen] = useState(false);
   const ref = useRef();
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login", { replace: true });
-};
+  };
 
   useEffect(() => {
     const close = (e) => {
@@ -29,7 +29,13 @@ export default function Header() {
 
   return (
     <header className="dash-header">
-      <h2 className="dh-title">Tex Dashboard</h2>
+      <div className="dh-left">
+        <img
+          src="/logo2.png"
+          alt="Company Logo"
+          className="dh-logo"
+        />
+      </div>
 
       <div className="dh-right" ref={ref}>
         {/* THEME BUTTON */}
@@ -45,9 +51,9 @@ export default function Header() {
         {/* DROPDOWN */}
         {open && (
           <div className="profile-menu">
-            <div className="pm-item">
-              {/* <Settings size={16} /> Settings */}
-            </div>
+            {/* <div className="pm-item">
+              <Settings size={16} /> Settings
+            </div> */}
             <div className="pm-item" onClick={handleLogout}>
               <LogOut size={16} /> Logout
             </div>

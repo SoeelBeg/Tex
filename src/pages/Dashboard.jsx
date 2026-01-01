@@ -1,79 +1,94 @@
 // src/pages/Dashboard.jsx
-import React, { useEffect, useMemo, useState } from "react";
-import { getProductionData } from "../api/dashboardApi";
+import React, {
+  useEffect, useMemo, useState, lazy,
+  Suspense
+} from "react";
+import { getProductionData, getProductionTiles } from "../api/dashboardApi";
+import { getStockData, getStockTiles } from "../api/stockApi";
 
 // UI Components
 import TilesRow from "../components/Dashboard/TilesRow";
-import YearChart from "../components/Dashboard/YearChart";
-import MonthChart from "../components/Dashboard/MonthChart";
-import ProductionGrid from "../components/Dashboard/ProductionGrid";
+
+// Lazy loaded (heavy components)
+const YearChart = lazy(() => import("../components/Dashboard/YearChart"));
+const MonthChart = lazy(() => import("../components/Dashboard/MonthChart"));
+const ProductionGrid = lazy(() => import("../components/Dashboard/ProductionGrid"));
 
 export default function DashboardPage() {
-  
-  // STATE---- define all list---
 
+  //"production" → Production dashboard ,"stock" → Stock dashboard
+  const [activeTab, setActiveTab] = useState("production");
+
+  const apiMap = useMemo(() => ({
+    production: {
+      getData: getProductionData,
+      getTiles: getProductionTiles
+    },
+    stock: {
+      getData: getStockData,
+      getTiles: getStockTiles
+    }
+  }), []);
+
+
+
+  // STATE---- API se aane wala raw data------
   const [yearList, setYearList] = useState([]);
   const [monthList, setMonthList] = useState([]);
   const [lists, setLists] = useState({});
 
+  //User ne kaunsa Year / Month select kiya
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
 
+  //Loader control
   const [loadingPage, setLoadingPage] = useState(true);
   const [loadingLists, setLoadingLists] = useState(false);
 
-  // HELPERS: API → Chart format
-
-  /**
-   * Converts API year list to chart format
-   */
+  //Converts API year list to chart format
   const yearToChart = (arr = []) =>
     Array.isArray(arr)
       ? arr.map(r => ({
-          name: String(r?.FnYear ?? r?.Year ?? r?.fnYear ?? ""),
-          value: Number(r?.Production ?? 0),
-          __raw: r
-        }))
+        name: String(r?.FnYear ?? r?.Year ?? r?.fnYear ?? ""),
+        value: Number(r?.Production ?? 0),
+        __raw: r
+      }))
       : [];
 
-  /**
-   * Converts API month list to chart format
-   */
+  //Converts API month list to chart format
   const monthToChart = (arr = []) =>
     Array.isArray(arr)
       ? arr.map(r => {
-          const monthNo =
-            Number(r?.MonthNo) ||
-            Number(r?.Month) ||
-            Number(r?.month) ||
-            0;
+        const monthNo =
+          Number(r?.MonthNo) ||
+          Number(r?.Month) ||
+          Number(r?.month) ||
+          0;
 
-          const monthName =
-            r?.MonthName ||
-            (monthNo
-              ? ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][monthNo - 1]
-              : "");
+        const monthName =
+          r?.MonthName ||
+          (monthNo
+            ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][monthNo - 1]
+            : "");
 
-          return {
-            name: monthName,
-            value: Number(r?.Production ?? 0),
-            monthNo,
-            __raw: r
-          };
-        })
+        return {
+          name: monthName,
+          value: Number(r?.Production ?? 0),
+          monthNo,
+          __raw: r
+        };
+      })
       : [];
 
-  // API CALLS
-  /**
-   * Load Year wise production
-   */
+  //Load Year wise production
   const loadYears = async () => {
     try {
-      const res = await getProductionData({
+      const res = await apiMap[activeTab].getData({
         type: "year",
         fnYear: 0,
         month: 0
       });
+
 
       const arr = Array.isArray(res) ? res : [];
       setYearList(arr);
@@ -85,18 +100,18 @@ export default function DashboardPage() {
     }
   };
 
-  /**
-   * Load Month list for selected year
-   */
+
+  //  Load Month list for selected year
   const loadMonths = async (year) => {
     if (!year) return [];
 
     try {
-      const res = await getProductionData({
+      const res = await apiMap[activeTab].getData({
         type: "month",
         fnYear: year,
         month: 0
       });
+
 
       const arr = Array.isArray(res) ? res : [];
       setMonthList(arr);
@@ -109,7 +124,7 @@ export default function DashboardPage() {
   };
 
   /**
-   * Load all production lists
+   * Load all production lists | APIs parallel me call hoti hai
    * book / beam / item / factory / customer etc
    */
   const loadLists = async (year, month = 0) => {
@@ -118,11 +133,11 @@ export default function DashboardPage() {
     setLoadingLists(true);
 
     try {
-      const types = ["book","beam","item","selvage","factory","customer"];
+      const types = ["book", "beam", "item", "selvage", "factory", "customer"];
 
       const results = await Promise.all(
         types.map(type =>
-          getProductionData({
+          apiMap[activeTab].getData({
             fnYear: year,
             month,
             type
@@ -147,46 +162,52 @@ export default function DashboardPage() {
     }
   };
 
+
+  //---Tils-------
+  const [tilesData, setTilesData] = useState(null);
+  const [loadingTiles, setLoadingTiles] = useState(false);
+
+  const loadTiles = async () => {
+    setLoadingTiles(true);
+
+    try {
+      const res = await apiMap[activeTab].getTiles();
+      setTilesData(res);
+
+    } catch (err) {
+      console.error("loadTiles error:", err);
+      setTilesData(null);
+    } finally {
+      setLoadingTiles(false);
+    }
+  };
+
   // INITIAL LOAD (on page open)
 
   useEffect(() => {
     (async () => {
-      setLoadingPage(true);
+      setYearList([]);
+      setMonthList([]);
+      setLists({});
+      setTilesData(null);
 
-      try {
-        const years = await loadYears();
-        if (!years.length) return;
+      await loadTiles();
 
-        // Pick latest financial year
-        const yearNumbers = years
-          .map(y => Number(y?.FnYear ?? y?.Year))
-          .filter(Boolean);
+      const years = await loadYears();
+      if (!years.length) return;
 
-        const latestYear = Math.max(...yearNumbers);
-        setSelectedYear(latestYear);
+      const latestYear = Math.max(
+        ...years.map(y => Number(y?.FnYear ?? y?.Year))
+      );
 
-        // Load months for that year
-        const months = await loadMonths(latestYear);
-        const monthNos = months
-          .map(m => Number(m?.MonthNo ?? m?.Month))
-          .filter(Boolean);
-
-        const latestMonth = monthNos.length ? Math.max(...monthNos) : 0;
-        setSelectedMonth(latestMonth);
-
-        // Load detail lists
-        await loadLists(latestYear, latestMonth);
-
-      } catch (err) {
-        console.error("Dashboard init error:", err);
-      } finally {
-        setLoadingPage(false);
-      }
+      setSelectedYear(latestYear);
+      await loadMonths(latestYear);
+      await loadLists(latestYear, 0);
     })();
-  }, []);
+  }, [activeTab]);
 
-  // -----EVENT HANDLERS
 
+  // -----EVENT HANDLERS | Chart click → Month chart + Grid update
   const handleYearClick = async (year) => {
     if (!year) return;
 
@@ -198,7 +219,7 @@ export default function DashboardPage() {
     const latestMonth = monthNos.length ? Math.max(...monthNos) : 0;
 
     setSelectedMonth(latestMonth);
-    await loadLists(year, latestMonth);
+    await loadLists(year, 0);
   };
 
   const handleMonthClick = async (monthNo) => {
@@ -221,48 +242,89 @@ export default function DashboardPage() {
     [monthList]
   );
 
+
+  // // Period label for KPI tiles
+  // const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const yearLabel = tilesData?.Year
+    ? `Year ${tilesData.Year}`
+    : "—";
+
+  const monthLabel = tilesData?.Month
+    ? `${tilesData.Month} ${tilesData.Year}`
+    : "—";
+
+  const weekLabel = tilesData?.Week
+    ? `Week ${tilesData.Week}`
+    : "—";
+
+  const dayLabel = tilesData?.Date
+    ? new Date(tilesData.Date).toDateString()
+    : "—";
+
+
   const summary = {
-    quantity: (lists.book || []).reduce(
-      (sum, r) => sum + Number(r?.Production ?? 0),
-      0
-    ),
-    rework: "—",
-    cost: "—",
-    labor: "—"
+    quantity: tilesData?.YearlyProduction ?? "—",
+    rework: tilesData?.MonthlyProduction ?? "—",
+    cost: tilesData?.WeeklyProduction ?? "—",
+    labor: tilesData?.DailyProduction ?? "—"
   };
 
-  // Period label for KPI tiles
-  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-  const periodLabel = selectedMonth
-    ? `${MONTH_NAMES[selectedMonth - 1]} ${selectedYear}`
-    : `Year ${selectedYear}`;
 
   // -----------UI-------------
-
-
   return (
     <div className="dashboard-page container-fluid p-3">
 
-      <TilesRow summary={summary} periodLabel={periodLabel} />
+      <div className="dashboard-tabs">
+        <button
+          onClick={() => setActiveTab("production")}
+          className={activeTab === "production" ? "active" : ""}
+        >
+          Production
+        </button>
+
+        <button
+          onClick={() => setActiveTab("stock")}
+          className={activeTab === "stock" ? "active" : ""}
+        >
+          Stock
+        </button>
+      </div>
+
+
+      <TilesRow
+        summary={summary}
+        yearLabel={yearLabel}
+        monthLabel={monthLabel}
+        weekLabel={weekLabel}
+        dayLabel={dayLabel}
+      />
+
 
       <div className="row g-3">
         <div className="col-lg-6">
-          <YearChart
-            data={yearChartData}
-            onSelectYear={handleYearClick}
-          />
+          <Suspense fallback={<div>Loading Year Chart...</div>}>
+            <YearChart
+              data={yearChartData}
+              onSelectYear={handleYearClick}
+            />
+          </Suspense>
         </div>
 
         <div className="col-lg-6">
-          <MonthChart
-            data={monthChartData}
-            onSelectMonth={handleMonthClick}
-          />
+          <Suspense fallback={<div>Loading Month Chart...</div>}>
+            <MonthChart
+              data={monthChartData}
+              onSelectMonth={handleMonthClick}
+            />
+          </Suspense>
         </div>
       </div>
 
-      <div style={{ marginTop: 18, position: "relative", minHeight: 420 }}>
+
+      <div className="production-wrapper">
+
         <ProductionGrid lists={lists} />
 
         {loadingLists && (
@@ -272,7 +334,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {loadingPage && <div>Loading dashboard...</div>}
+      {loadingPage}
     </div>
   );
 }

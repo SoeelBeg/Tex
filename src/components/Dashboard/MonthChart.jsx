@@ -100,8 +100,8 @@ function MonthChart({ data = [], onSelectMonth = () => {} }) {
             {/* Gradient for area */}
             <defs>
               <linearGradient id="colorProd" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#46a3e5" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#46c5e5" stopOpacity={0} />
+                <stop offset="5%" stopColor="#014fc6ff" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#46c5e5" stopOpacity={0.1} />
               </linearGradient>
             </defs>
 
@@ -113,12 +113,12 @@ function MonthChart({ data = [], onSelectMonth = () => {} }) {
             />
 
             {/* X Axis */}
-            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <XAxis dataKey="name" tick={{ fontSize: 12,  fontWeight: 600,fill:  "var(--text-main)" }} />
 
             {/* Y Axis */}
             <YAxis
               width={70}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 13, fontWeight: 600,fill:  "var(--text-main)" }}
               tickFormatter={(v) => Number(v).toLocaleString()}
             />
 

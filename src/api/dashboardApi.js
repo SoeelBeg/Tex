@@ -20,3 +20,21 @@ export const getProductionData = async (payload) => {
     return [];
   }
 };
+
+
+//----for tiles ----
+export const getProductionTiles = async () => {
+  try {
+    const res = await api.get(
+      "/Production/GetProductionTiles"
+    );
+
+    // API response:
+    // { success, data: {...}, message }
+    return res.data?.data || null;
+
+  } catch (error) {
+    console.error("getProductionTiles error:", error);
+    return null;
+  }
+};

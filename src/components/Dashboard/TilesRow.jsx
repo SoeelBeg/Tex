@@ -4,45 +4,46 @@ import KpiTile from "./KpiTile";
 /**
  * Top KPI tiles row (Quantity, Rework, Cost, Labor)
  */
-export default function TilesRow({ summary = {}, periodLabel = "All" }) {
+export default function TilesRow({
+  summary = {},
+  yearLabel = "—",
+  monthLabel = "—",
+  weekLabel = "—",
+  dayLabel = "—"
+}) {
+
   return (
     <div className="tiles-row">
 
       {/* Quantity KPI */}
       <KpiTile
-        title="Quantity"
-        value={summary.quantity?.toLocaleString() ?? "—"}
-        diff={15}
-        positive={true}
-        sub={`Production (${periodLabel})`}
+        className="kpi-primary"
+        title="Year Production"
+        value={summary.quantity}
+        sub={yearLabel}
       />
 
-      {/* Rework KPI */}
       <KpiTile
-        title="Rework Quantity"
-        value={summary.rework ?? "—"}
-        diff={-89}
-        positive={false}
-        sub="Current Month"
+        className="kpi-success"
+        title="Month Production"
+        value={summary.rework}
+        sub={monthLabel}
       />
 
-      {/* Manufacturing Cost KPI */}
       <KpiTile
-        title="Manufacturing Cost"
-        value={summary.cost ?? "—"}
-        diff={-90}
-        positive={false}
-        sub="Current Month"
+        className="kpi-warning"
+        title="Week Production"
+        value={summary.cost}
+        sub={weekLabel}
       />
 
-      {/* Labor Cost KPI */}
       <KpiTile
-        title="Labor Cost"
-        value={summary.labor ?? "—"}
-        diff={-91}
-        positive={false}
-        sub="Current Month"
+        className="kpi-danger"
+        title="Today Production"
+        value={summary.labor}
+        sub={dayLabel}
       />
+
 
     </div>
   );

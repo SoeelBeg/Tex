@@ -1,36 +1,262 @@
+
 /* MAIN PAGE */
 .dashboard-page {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
   color: var(--text-main);
-  background-color: beige;
+  min-height: 100vh;
+
+   background: var(--bg-main);
+  background-size: 300% 300%;
+  animation: dashboardGradient 18s ease infinite;
 }
+@keyframes dashboardGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.dashboard-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(13,110,253,0.08),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(99,102,241,0.06),
+      transparent 55%
+    );
+}
+.dashboard-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(0,0,0,0.04) 0,
+      rgba(0,0,0,0.04) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-page {
+    animation: none;
+  }
+}
+
+
+
+/* DASHBOARD TABS */
+.dashboard-tabs {
+  display: inline-flex;
+  gap: 6px;
+  background: var(--bg-card);
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+}
+
+.dashboard-tabs button {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.dashboard-tabs button:hover {
+  background: rgba(13, 110, 253, 0.08);
+  color: #0d6efd;
+}
+
+.dashboard-tabs button.active {
+  background: #0d6efd;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(13,110,253,0.35);
+}
+
+
 
 /* KPI Tiles */
 .tiles-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Desktop */
   gap: 12px;
   margin-bottom: 18px;
 }
+
 
 .kpi-tile {
   flex: 1;
   background: var(--bg-card);
   padding: 14px 18px;
-  border-radius: 10px;
-  box-shadow: 0 6px 18px var(--shadow);
+  border-top-right-radius: 45px;
+  border-bottom-right-radius: 45px;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* box-shadow: 0 6px 18px var(--shadow); */
   border: 1px solid var(--border);
-  transition: 0.25s ease;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
+  cursor: default;
+   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* for animation*/
+
+  /* strip ka compensation */
+  padding-left: 24px;   /* 18px + 6px strip */
+  padding-right: 18px;
+  
+}
+
+/* border animation*/
+.kpi-tile .border-runner {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.border-runner i {
+  position: absolute;
+  background: var(--kpi-color);
+}
+
+/* TOP */
+.border-runner .top {
+  top: 0;
+  left: -100%;
+  height: 2px;
+  width: 100%;
+  animation: run-top 6s linear infinite;
+}
+
+/* RIGHT */
+.border-runner .right {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  animation: run-right 6s linear infinite;
+  animation-delay: 0.6s;
+}
+
+/* BOTTOM */
+.border-runner .bottom {
+  bottom: 0;
+  right: -100%;
+  height: 2px;
+  width: 100%;
+animation: run-bottom 6s linear infinite;
+animation-delay: 3s;
+
+}
+
+/* LEFT */
+.border-runner .left {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  animation: run-left 6s linear infinite;
+  animation-delay: 1.8s;
+}
+@keyframes run-top {
+  from { left: -100%; }
+  to { left: 100%; }
+}
+
+/* @keyframes run-right {
+  from { top: -100%; }
+  to { top: 100%; }
+} */
+
+@keyframes run-bottom {
+  from { right: -100%; }
+  to { right: 100%; }
+}
+
+/* @keyframes run-left {
+  from { bottom: -100%; }
+  to { bottom: 100%; }
+} */
+
+[data-theme="dark"] .border-runner i {
+ opacity: 0.9;
+}
+
+
+.kpi-tile:hover .border-runner i {
+  background-color: var(--kpi-hover-bg);
+   animation-duration: none;
 }
 
 .kpi-title {
-  font-size: 13px;
-  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-main);
+   /* background-color: var(--kpi-bg, var(--bg-card)); */
+   /* cursor: pointer; */
+}
+
+
+.kpi-tile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;              /* strip thickness */
+  height: 100%;
+  border-radius: 10px 0 0 10px;
+  background: var(--kpi-color, #999);
+}
+
+.kpi-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+.kpi-tile:hover::before {
+  filter: brightness(1.2);
 }
 
 .kpi-value {
-  font-size: 22px;
+ font-size: 23px;
+  letter-spacing: 0.3px;
+   font-family: "Inter", system-ui, sans-serif;
   font-weight: 700;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  margin-top: 4px;
   color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kpi-diff {
@@ -41,20 +267,47 @@
   margin-left: 8px;
 }
 
-.kpi-diff.pos {
-  color: #22c55e;
+.kpi-sub{
+   font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
-.kpi-diff.neg {
-  color: #ef4444;
+/* KPI Color Variants */
+.kpi-primary {
+  --kpi-color: #0d6efd;
+  --kpi-bg: #f4f8ff;
 }
 
-.kpi-sub {
-  color: var(--text-sub);
-  font-size: 12px;
+.kpi-success {
+  --kpi-color: #198754;
+  --kpi-bg: #f3fbf6;
 }
+
+.kpi-warning {
+  --kpi-color: #fd7e14;
+  --kpi-bg: #fff6ee;
+}
+
+.kpi-danger {
+  --kpi-color: #dc3545;
+  --kpi-bg: #fff5f5;
+}
+
 
 /* CHART CARDS */
+
+.chart-container {
+  width: 100%;
+  height: 420px;
+}
+
+@media (max-width: 575px) {
+  .chart-container {
+    height: 260px; /* mobile ke liye perfect */
+  }
+}
+
 .chart-card {
   background: var(--bg-card);
   border-radius: 12px;
@@ -62,6 +315,9 @@
   box-shadow: 0 6px 18px var(--shadow);
   border: 1px solid var(--border);
   transition: 0.25s ease;
+}
+.chart-card svg {
+  color: var(--text-main); /* 👈 SVG text now follows theme */
 }
 
 .chart-title {
@@ -78,6 +334,16 @@
   gap: 12px;
   margin-top: 18px;
 }
+.production-wrapper {
+  margin-top: 18px;
+  position: relative;
+}
+
+@media (max-width: 575px) {
+  .production-wrapper {
+    min-height: auto; /* ❗ most important */
+  }
+}
 
 .prod-card {
   background: var(--bg-card);
@@ -90,19 +356,20 @@
   display: flex;
   flex-direction: column;
   color: var(--text-main);
+    grid-column: 1 / -1;
 }
 
 .prod-card:hover {
-  transform: translateY(-6px);
+  /* transform: translateY(-6px); */
   box-shadow: 0 12px 36px var(--shadow);
 }
 
-.prod-card-header {
+/* .prod-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: var(--text-main);
-}
+} */
 
 .prod-card-body {
   display: flex;
@@ -112,14 +379,14 @@
 }
 
 /* Donut & mini charts */
-.prod-donut {
+/* .prod-donut {
   width: 35%;
   min-width: 110px;
 }
 
 .prod-mini {
   flex: 1;
-}
+} */
 
 /* TOOLTIP */
 .custom-tooltip {
@@ -131,6 +398,22 @@
   border: 1px solid var(--border);
 }
 
+
+/* DASHBOARD TABS */
+@media (max-width: 575px) {
+  .dashboard-tabs {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dashboard-tabs button {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+  }
+}
+
+
 /* small screens */
 @media (max-width: 991px) {
   .production-grid {
@@ -141,11 +424,50 @@
 @media (max-width: 575px) {
   .production-grid {
     grid-template-columns: 1fr;
+     margin-top: 10px;
   }
   .tiles-row {
     flex-direction: column;
   }
 }
+
+@media (max-width: 991px) {
+  .tiles-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575px) {
+  .tiles-row {
+    grid-template-columns: repeat(2, 1fr); /* 2 tiles per row */
+  }
+}
+@media (max-width: 575px) {
+  .kpi-tile {
+    padding: 12px;
+  }
+
+  .kpi-title {
+    font-size: 12px;
+  }
+
+  .kpi-value {
+    font-size: 18px;
+  }
+
+  .kpi-sub {
+    font-size: 11px;
+  }
+}
+
+
+@media (max-width: 575px) {
+  .prod-card {
+    grid-column: auto; /* reset */
+  }
+}
+
+
 /* Remove unwanted black border when clicking Recharts charts */
 .recharts-wrapper:focus,
 .recharts-surface:focus,

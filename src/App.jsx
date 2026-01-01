@@ -1,11 +1,14 @@
 // src/App.jsx
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import MainLayout from "./layout/MainLayout";
-import { ThemeProvider } from "./ThemeContext";
+import React, { lazy, Suspense } from "react";
 
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+// Lazy imports
+const Login = lazy(() => import("./pages/Login"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const MainLayout = lazy(() => import("./layout/MainLayout"));
+
+import { ThemeProvider } from "./ThemeContext";
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" />;
@@ -13,25 +16,30 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <ThemeProvider>  
+    <ThemeProvider>
       <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
+        <Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>
+          <Routes>
 
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <MainLayout>
-                  <Dashboard />
-                </MainLayout>
-              </PrivateRoute>
-            }
-          />
+            <Route path="/login" element={<Login />} />
 
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <MainLayout>
+                    <Dashboard />
+                  </MainLayout>
+                </PrivateRoute>
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/login" />} />
+
+          </Routes>
+        </Suspense>
       </Router>
     </ThemeProvider>
   );
 }
+
